@@ -11,16 +11,16 @@
   <div class="container">
     <div class="row">
       <div class="col-12 col-md-10 col-lg-8 mx-auto">
-        <h1 class="display-3">RSS агрегатор</h1>
-        <p class="fs-5 fw-light">Начните читать RSS сегодня! Это легко, это красиво.</p>
+        <h1 id="main-heading" class="display-3"></h1>
+        <p id="sub-heading" class="fs-5 fw-light"></p>
         <form class="row g-3" id="form-rss">
           <div class="col-9">
             <label for="url" class="visually-hidden">Url</label>
-            <input type="text" class="form-control  fs-5 p-2" id="url" placeholder="Ссылка RSS">
-            <div class="form-text fs-6">Пример: https://ru.hexlet.io/lessons.rss</div>
+            <input type="text" class="form-control  fs-5 p-2" id="url">
+            <div id="example" class="form-text fs-6"></div>
           </div>
           <div class="col-3">
-            <button type="submit" class="btn btn-primary mb-3 form-control fs-5 p-2">Добавить</button>
+            <button id="button-add" type="submit" class="btn btn-primary mb-3 form-control fs-5 p-2"></button>
           </div>
         </form>
       </div> 
