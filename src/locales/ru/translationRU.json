@@ -3,5 +3,8 @@
   "sub-heading": "Начните читать RSS сегодня! Это легко, это красиво.",
   "button-add": "Добавить",
   "example": "Пример: https://ru.hexlet.io/lessons.rss",
-  "input-placeholder": "Ссылка RSS"
+  "input-placeholder": "Ссылка RSS",
+  "heading-posts": "Посты",
+  "heading-feeds": "Фиды",
+  "show": "Просмотр"
 }
