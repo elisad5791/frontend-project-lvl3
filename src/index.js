@@ -41,10 +41,10 @@ form.addEventListener('submit', (e) => {
     });
 });
 
-axios.get('https://ru.hexlet.io/lessons.rss')
+axios.get('https://allorigins.hexlet.app/get?disableCache=true&url=http://lorem-rss.herokuapp.com/feed')
   .then(function (response) {
     const parser = new DOMParser();
-    const doc = parser.parseFromString(response.data, "application/xml");
+    const doc = parser.parseFromString(response.data.contents, "application/xml");
     const result = [...doc.getElementsByTagName('channel')[0].childNodes];
     
     const titleNodes = result.filter((item) => item.nodeName === 'title');
