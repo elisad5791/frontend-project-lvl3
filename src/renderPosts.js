@@ -21,12 +21,20 @@ const renderPosts = (doc) => {
   const itemNodes = result.filter((item) => item.nodeName === 'item');
   itemNodes.forEach((itemNode) => {
     const link = document.createElement('a');
-    link.textContent = itemNode.getElementsByTagName('title')[0].textContent;
+    const postTitle = itemNode.getElementsByTagName('title')[0].textContent;
+    link.textContent = postTitle;
     link.href = itemNode.getElementsByTagName('link')[0].textContent;
 
     const button = document.createElement('button');
     button.classList.add('btn', 'btn-outline-primary');
+    button.setAttribute('data-bs-toggle', 'modal');
+    button.setAttribute('data-bs-target', '#exampleModal');
     button.textContent = 'Просмотр';
+    button.addEventListener('click', (e) => {
+      const modalTitle = document.getElementById('exampleModalLabel');
+      modalTitle.textContent = postTitle;
+    });
+    
 
     const div = document.createElement('div');
     div.classList.add('d-flex', 'justify-content-between', 'mb-3');

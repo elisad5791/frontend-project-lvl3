@@ -15,7 +15,7 @@ const listen = () => {
     renderPosts(doc);
   })
   .then(() => {
-    setTimeout(listen, 5000);
+    //setTimeout(listen, 5000);
   })
   .catch(function (error) {
     console.log(error);
