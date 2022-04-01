@@ -2,14 +2,15 @@ import * as yup from 'yup';
 import onChange from 'on-change';
 import _ from 'lodash';
 import uploadChannel from './uploadChannel.js';
-import { renderForm } from './renders.js';
+import { renderForm, renderFeeds, renderPosts } from './renders.js';
 
-const listenChannels = (state, i18n) => {
+const listenChannels = (watchedState) => {
   const period = 5000;
-  state.channels.forEach((channel) => {
-    uploadChannel(channel, i18n, false);
-  });
-  setTimeout(listenChannels.bind(null, state, i18n), period);
+  const channelsCount = watchedState.channels.length;
+  for (let i = 0; i < channelsCount; i += 1) {
+    uploadChannel(i, watchedState);
+  }
+  setTimeout(listenChannels.bind(null, watchedState), period);
 };
 
 const runApp = (i18n) => {
@@ -17,15 +18,23 @@ const runApp = (i18n) => {
   const input = document.getElementById('url');
   
   const state = {
+    addChannel: false,
     valid: true,
     channels: [],
+    posts: [],
+    lastChannelUrl: '',
     error: '',
   };
-  const watchedState = onChange(state, (path, value) => {
-    renderForm(input, watchedState, i18n);
-    if (path === 'channels') {
-      const channel = _.last(value);
-      uploadChannel(channel, i18n, true);
+  const watchedState = onChange(state, (path) => {
+    if (path === 'lastChannelUrl') {
+      renderForm(input, watchedState, i18n);
+      uploadChannel(watchedState.channels.length, watchedState);
+    } else if (path === 'error') {
+      renderForm(input, watchedState, i18n);
+    } else if (path === 'channels') {
+      renderFeeds(watchedState);
+    } else if (path === 'posts') {
+      renderPosts(watchedState, i18n);
     }
   });
   
@@ -46,16 +55,18 @@ const runApp = (i18n) => {
     schema
       .validate(val)
       .then((val) => { 
-        watchedState.channels.push(val);
         watchedState.valid = true; 
+        watchedState.error = '';
+        watchedState.addChannel = true;
+        watchedState.lastChannelUrl = val;
       })
       .catch((err) => { 
-        watchedState.error = err.errors[0];
         watchedState.valid = false; 
+        watchedState.error = err.errors[0];
       });
   });
 
-  listenChannels(watchedState, i18n);
+  listenChannels(watchedState);
 };
 
 export default runApp;

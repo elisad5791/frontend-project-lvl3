@@ -1,4 +1,6 @@
-const parseRss = (doc, url, id) => {
+const parseRss = (response, url, id) => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(response.data.contents, "application/xml");
   const nodes = [...doc.getElementsByTagName('channel')[0].childNodes];
 
   const titleNodes = nodes.filter((item) => item.nodeName === 'title');

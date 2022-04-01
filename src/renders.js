@@ -17,22 +17,27 @@ const renderForm = (input, watchedState, i18n) => {
   }
 };
 
-const renderFeed = (info) => {
-  const titleElem = document.createElement('p');
-  titleElem.classList.add('fw-bold', 'mb-0');
-  titleElem.textContent = info.title;
-
-  const descElem = document.createElement('p');
-  descElem.textContent = info.description;
-
-  const feeds = document.getElementById('feeds');
-  feeds.append(titleElem, descElem);
+const renderFeeds = (watchedState) => {
   const content = document.getElementById('content');
   content.classList.remove('d-none');
+  const feeds = document.getElementById('feeds');
+  feeds.innerHTML = '';
+
+  watchedState.channels.forEach((channel) => {
+    const titleElem = document.createElement('p');
+    titleElem.classList.add('fw-bold', 'mb-0');
+    titleElem.textContent = channel.title;
+  
+    const descElem = document.createElement('p');
+    descElem.textContent = channel.description;
+
+    feeds.append(titleElem, descElem);
+  });
+  
 };
 
-const renderPosts = (posts, i18n) => {
-  const sortedPosts = _.sortBy(posts, ['timemark']);
+const renderPosts = (watchedState, i18n) => {
+  const sortedPosts = _.reverse(_.sortBy(watchedState.posts, (o) => Date.parse(o.timemark)));
   const postsContainer = document.getElementById('posts');
   postsContainer.innerHTML = '';
   sortedPosts.forEach((post) => {
@@ -62,4 +67,4 @@ const renderPosts = (posts, i18n) => {
   });
 };
 
-export { renderForm, renderFeed, renderPosts };
+export { renderForm, renderFeeds, renderPosts };
