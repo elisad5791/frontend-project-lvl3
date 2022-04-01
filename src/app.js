@@ -1,22 +1,18 @@
 import * as yup from 'yup';
 import onChange from 'on-change';
+import _ from 'lodash';
+import uploadChannel from './uploadChannel.js';
+import { renderForm } from './renders.js';
 
-const render = (input, watchedState, i18n) => {
-  const feedback = document.getElementById('feedback');
-  if (watchedState.valid) {
-    input.value = '';
-    input.classList.remove('is-invalid');
-    input.focus();
-    feedback.className = 'text-success';
-    feedback.textContent = i18n.t('success');
-  } else {
-    input.classList.add('is-invalid');
-    feedback.className = 'text-danger';
-    feedback.textContent = i18n.t(watchedState.error);
-  }
+const listenChannels = (state, i18n) => {
+  const period = 5000;
+  state.channels.forEach((channel) => {
+    uploadChannel(channel, i18n, false);
+  });
+  setTimeout(listenChannels.bind(null, state, i18n), period);
 };
 
-const addChannels = (i18n) => {
+const runApp = (i18n) => {
   const form = document.getElementById('form-rss');
   const input = document.getElementById('url');
   
@@ -25,8 +21,12 @@ const addChannels = (i18n) => {
     channels: [],
     error: '',
   };
-  const watchedState = onChange(state, () => {
-    render(input, watchedState, i18n);
+  const watchedState = onChange(state, (path, value) => {
+    renderForm(input, watchedState, i18n);
+    if (path === 'channels') {
+      const channel = _.last(value);
+      uploadChannel(channel, i18n, true);
+    }
   });
   
   yup.setLocale({
@@ -54,6 +54,8 @@ const addChannels = (i18n) => {
         watchedState.valid = false; 
       });
   });
+
+  listenChannels(watchedState, i18n);
 };
 
-export default addChannels;
+export default runApp;
