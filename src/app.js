@@ -33,7 +33,7 @@ const runApp = (i18n) => {
       renderForm(input, watchedState, i18n);
     } else if (path === 'channels') {
       renderFeeds(watchedState);
-    } else if (path === 'posts') {
+    } else if (path.startsWith('posts')) {
       renderPosts(watchedState, i18n);
     }
   });

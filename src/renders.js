@@ -42,6 +42,11 @@ const renderPosts = (watchedState, i18n) => {
   postsContainer.innerHTML = '';
   sortedPosts.forEach((post) => {
     const link = document.createElement('a');
+    if (post.viewed) {
+      link.classList.add('fw-normal');
+    } else {
+      link.classList.add('fw-bold');
+    }
     link.textContent = post.title;
     link.href = post.link;
 
@@ -58,10 +63,11 @@ const renderPosts = (watchedState, i18n) => {
       titleElem.textContent = post.title;
       bodyElem.textContent = post.description;
       linkElem.href = post.link;
+      post.viewed = true;
     });
 
     const div = document.createElement('div');
-    div.classList.add('d-flex', 'justify-content-between', 'mb-3');
+    div.classList.add('d-flex', 'justify-content-between', 'align-items-start', 'mb-3');
     div.append(link, button);
     postsContainer.append(div);
   });

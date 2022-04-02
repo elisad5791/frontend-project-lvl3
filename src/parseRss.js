@@ -29,6 +29,7 @@ const parseRss = (response, url, id) => {
       link: postLink,
       timemark: postTimemark,
       channel: id,
+      viewed: false,
     };
     data.posts.push(post);
   });
