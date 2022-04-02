@@ -4,6 +4,8 @@ const translation = {
   notOneOf: 'RSS уже существует',
   success: 'RSS успешно загружен',
   show: 'Просмотр',
+  network: 'Ошибка сети',
+  parsing: 'Ресурс не содержит валидный RSS',
 };
 
 export default translation;

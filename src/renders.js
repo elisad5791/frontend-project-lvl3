@@ -6,14 +6,15 @@ const renderForm = (input, watchedState, i18n) => {
     input.value = '';
     input.classList.remove('is-invalid');
     input.focus();
-
-    feedback.className = 'text-success';
-    feedback.textContent = i18n.t('success');
   } else {
     input.classList.add('is-invalid');
-
+  }
+  if (watchedState.error){
     feedback.className = 'text-danger';
     feedback.textContent = i18n.t(watchedState.error);
+  } else {
+    feedback.className = 'text-success';
+    feedback.textContent = i18n.t('success');
   }
 };
 
