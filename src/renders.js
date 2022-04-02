@@ -9,7 +9,7 @@ const renderForm = (input, watchedState, i18n) => {
   } else {
     input.classList.add('is-invalid');
   }
-  if (watchedState.error){
+  if (watchedState.error) {
     feedback.className = 'text-danger';
     feedback.textContent = i18n.t(watchedState.error);
   } else {

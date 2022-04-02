@@ -2,16 +2,6 @@ import axios from 'axios';
 import _ from 'lodash';
 import parseRss from './parse.js';
 
-const uploadChannelFirst = (channelId, channelUrl, watchedState) => {
-  uploadChannel(channelId, channelUrl, watchedState)
-    .then((data) => {
-      watchedState.channels.push(data);
-    })
-    .catch((err) => {
-      watchedState.error = err;
-    });
-};
-
 const uploadChannel = (channelId, channelUrl, watchedState) => {
   const url = `https://allorigins.hexlet.app/get?disableCache=true&url=${channelUrl}`;
 
@@ -32,14 +22,24 @@ const uploadChannel = (channelId, channelUrl, watchedState) => {
           });
           resolve(channelInfo);
         } catch (e) {
-          reject('parsing');
+          reject(new Error('parsing'));
         }
       })
       .catch(() => {
-        reject('network');
-      }); 
+        reject(new Error('network'));
+      });
   });
   return promise;
+};
+
+const uploadChannelFirst = (channelId, channelUrl, watchedState) => {
+  uploadChannel(channelId, channelUrl, watchedState)
+    .then((data) => {
+      watchedState.channels.push(data);
+    })
+    .catch((err) => {
+      watchedState.error = err.message;
+    });
 };
 
 export { uploadChannelFirst, uploadChannel };

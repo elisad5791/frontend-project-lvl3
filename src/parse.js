@@ -4,17 +4,17 @@ const parseRss = (id, url, response) => {
 
   const title = doc.querySelector('title').textContent;
   const description = doc.querySelector('description').textContent;
-  
+
   const data = {
     channelInfo: {
       title,
       description,
       url,
-      id
+      id,
     },
     posts: [],
   };
-  
+
   const items = doc.querySelectorAll('item');
   items.forEach((item) => {
     const postTitle = item.querySelector('title').textContent;
