@@ -1,13 +1,13 @@
 const parseRss = (response, url, id) => {
   const parser = new DOMParser();
-  const doc = parser.parseFromString(response.data.contents, "application/xml");
+  const doc = parser.parseFromString(response.data.contents, 'application/xml');
   const nodes = [...doc.getElementsByTagName('channel')[0].childNodes];
 
   const titleNodes = nodes.filter((item) => item.nodeName === 'title');
   const title = titleNodes[0].textContent;
   const descNodes = nodes.filter((item) => item.nodeName === 'description');
   const description = descNodes[0].textContent;
-  
+
   const data = {
     channelInfo: {
       title,

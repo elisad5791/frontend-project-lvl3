@@ -27,13 +27,12 @@ const renderFeeds = (watchedState) => {
     const titleElem = document.createElement('p');
     titleElem.classList.add('fw-bold', 'mb-0');
     titleElem.textContent = channel.title;
-  
+
     const descElem = document.createElement('p');
     descElem.textContent = channel.description;
 
     feeds.append(titleElem, descElem);
   });
-  
 };
 
 const renderPosts = (watchedState, i18n) => {

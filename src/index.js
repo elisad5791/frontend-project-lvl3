@@ -11,8 +11,8 @@ i18nextInstance
     resources: {
       ru: {
         translation,
-      }
-    }
+      },
+    },
   })
   .then(() => {
     runApp(i18nextInstance);

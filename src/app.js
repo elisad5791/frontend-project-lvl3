@@ -1,6 +1,5 @@
 import * as yup from 'yup';
 import onChange from 'on-change';
-import _ from 'lodash';
 import uploadChannel from './uploadChannel.js';
 import { renderForm, renderFeeds, renderPosts } from './renders.js';
 
@@ -16,7 +15,7 @@ const listenChannels = (watchedState) => {
 const runApp = (i18n) => {
   const form = document.getElementById('form-rss');
   const input = document.getElementById('url');
-  
+
   const state = {
     addChannel: false,
     valid: true,
@@ -32,37 +31,39 @@ const runApp = (i18n) => {
     } else if (path === 'error') {
       renderForm(input, watchedState, i18n);
     } else if (path === 'channels') {
+      watchedState.addChannel = false;
       renderFeeds(watchedState);
     } else if (path.startsWith('posts')) {
       renderPosts(watchedState, i18n);
     }
   });
-  
+
   yup.setLocale({
     mixed: {
       required: () => 'required',
-      notOneOf: () => 'notOneOf'
+      notOneOf: () => 'notOneOf',
     },
     string: {
       url: () => 'url',
     },
   });
-  
+
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const val = input.value;
     const schema = yup.string().required().url().notOneOf(watchedState.channels);
     schema
       .validate(val)
-      .then((val) => { 
-        watchedState.valid = true; 
+      .then((value) => {
+        watchedState.valid = true;
         watchedState.error = '';
         watchedState.addChannel = true;
-        watchedState.lastChannelUrl = val;
+        watchedState.lastChannelUrl = value;
       })
-      .catch((err) => { 
-        watchedState.valid = false; 
-        watchedState.error = err.errors[0];
+      .catch((err) => {
+        watchedState.valid = false;
+        const { errors } = err;
+        [watchedState.error] = errors;
       });
   });
 
