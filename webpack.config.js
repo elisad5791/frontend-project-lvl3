@@ -1,14 +1,11 @@
-const path = require('path');
-const HTMLWebpackPlugin = require('html-webpack-plugin');
+import HTMLWebpackPlugin from 'html-webpack-plugin';
 
-module.exports = {
+export default {
   mode: 'development',
   entry: './src/index.js',
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
   },
-  devtool: 'source-map',
   plugins: [
     new HTMLWebpackPlugin({
       template: './index.html',
