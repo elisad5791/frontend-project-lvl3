@@ -1,5 +1,7 @@
 import * as yup from 'yup';
 import onChange from 'on-change';
+import i18next from 'i18next';
+import translation from './locales/ru/ru.js';
 import { uploadChannel, uploadChannelFirst } from './upload.js';
 import { renderForm, renderFeeds, renderPosts } from './renders.js';
 
@@ -13,7 +15,7 @@ const listenChannels = (watchedState) => {
     });
 };
 
-const runApp = (i18n) => {
+const app = (i18n) => {
   const form = document.getElementById('form-rss');
   const input = document.getElementById('url');
 
@@ -65,6 +67,22 @@ const runApp = (i18n) => {
   });
 
   listenChannels(watchedState);
+};
+
+const runApp = () => {
+  const i18nextInstance = i18next.createInstance();
+  i18nextInstance
+    .init({
+      lng: 'ru',
+      resources: {
+        ru: {
+          translation,
+        },
+      },
+    })
+    .then(() => {
+      app(i18nextInstance);
+    });
 };
 
 export default runApp;

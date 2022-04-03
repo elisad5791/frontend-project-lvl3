@@ -13,5 +13,5 @@ RSS agregator - a service for aggregating RSS feeds, with which it is convenient
 
 [RSS Agregator](https://frontend-project-lvl3-liart-chi.vercel.app/)
 
-This project is is created during training at [Hexlet](https://ru.hexlet.io), a programming onli school.
+This project is is created during training at [Hexlet](https://ru.hexlet.io), a programming online school.
 
