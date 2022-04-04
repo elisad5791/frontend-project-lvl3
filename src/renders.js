@@ -1,20 +1,30 @@
 import _ from 'lodash';
 
-const renderForm = (input, watchedState, i18n) => {
+const renderForm = (input, button, watchedState, i18n) => {
   const feedback = document.getElementById('feedback');
-  if (watchedState.valid) {
-    input.value = '';
-    input.classList.remove('is-invalid');
-    input.focus();
-  } else {
+  if (watchedState.status === 'invalid') {
     input.classList.add('is-invalid');
-  }
-  if (watchedState.error) {
+    input.focus();
     feedback.className = 'text-danger';
     feedback.textContent = i18n.t(watchedState.error);
-  } else {
+  } else if (watchedState.status === 'start') {
+    input.readOnly = true;
+    button.disabled = true;
+  } else if (watchedState.status === 'success') {
+    input.value = '';
+    input.classList.remove('is-invalid');
+    input.readOnly = false;
+    input.focus();
+    button.disabled = false;
     feedback.className = 'text-success';
     feedback.textContent = i18n.t('success');
+  } else if (watchedState.status === 'failure') {
+    input.classList.add('is-invalid');
+    input.readOnly = false;
+    input.focus();
+    button.disabled = false;
+    feedback.className = 'text-danger';
+    feedback.textContent = i18n.t(watchedState.error);
   }
 };
 

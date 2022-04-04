@@ -32,14 +32,14 @@ const uploadChannel = (channelId, channelUrl, watchedState) => {
   return promise;
 };
 
-const uploadChannelFirst = (channelId, channelUrl, watchedState) => {
-  uploadChannel(channelId, channelUrl, watchedState)
-    .then((data) => {
-      watchedState.channels.push(data);
-    })
-    .catch((err) => {
-      watchedState.error = err.message;
-    });
-};
+const uploadChannelFirst = (id, url, watchedState) => uploadChannel(id, url, watchedState)
+  .then((data) => {
+    watchedState.channels.push(data);
+    watchedState.status = 'success';
+  })
+  .catch((err) => {
+    watchedState.error = err.message;
+    watchedState.status = 'failure';
+  });
 
 export { uploadChannelFirst, uploadChannel };
