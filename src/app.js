@@ -27,15 +27,9 @@ const app = (i18n) => {
     error: '',
   };
   const watchedState = onChange(state, (path) => {
-    if (path === 'status') {
-      renderForm(input, button, watchedState, i18n);
-    }
-    if (path === 'channels') {
-      renderFeeds(watchedState);
-    }
-    if (path.startsWith('posts')) {
-      renderPosts(watchedState, i18n);
-    }
+    if (path === 'status') renderForm(input, button, watchedState, i18n);
+    if (path === 'channels') renderFeeds(watchedState);
+    if (path.startsWith('posts')) renderPosts(watchedState, i18n);
   });
 
   yup.setLocale({

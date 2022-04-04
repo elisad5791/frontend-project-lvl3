@@ -1,5 +1,17 @@
 import _ from 'lodash';
 
+const addButtonHandler = (button, post) => {
+  button.addEventListener('click', () => {
+    const titleElem = document.getElementById('modal-title');
+    const bodyElem = document.getElementById('modal-body');
+    const linkElem = document.getElementById('modal-link');
+    titleElem.textContent = post.title;
+    bodyElem.textContent = post.description;
+    linkElem.href = post.link;
+    post.viewed = true;
+  });
+};
+
 const renderForm = (input, button, watchedState, i18n) => {
   const feedback = document.getElementById('feedback');
   if (watchedState.status === 'invalid') {
@@ -65,16 +77,7 @@ const renderPosts = (watchedState, i18n) => {
     button.setAttribute('data-bs-toggle', 'modal');
     button.setAttribute('data-bs-target', '#modal');
     button.textContent = i18n.t('show');
-
-    button.addEventListener('click', () => {
-      const titleElem = document.getElementById('modal-title');
-      const bodyElem = document.getElementById('modal-body');
-      const linkElem = document.getElementById('modal-link');
-      titleElem.textContent = post.title;
-      bodyElem.textContent = post.description;
-      linkElem.href = post.link;
-      post.viewed = true;
-    });
+    addButtonHandler(button, post);
 
     const div = document.createElement('div');
     div.classList.add('d-flex', 'justify-content-between', 'align-items-start', 'mb-3');

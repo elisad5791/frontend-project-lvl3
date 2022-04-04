@@ -1,3 +1,21 @@
+const addItems = (items, data, id) => {
+  items.forEach((item) => {
+    const postTitle = item.querySelector('title').textContent;
+    const postLink = item.querySelector('link').textContent;
+    const postDescription = item.querySelector('description').textContent;
+    const postTimemark = item.querySelector('pubDate').textContent;
+    const post = {
+      title: postTitle,
+      description: postDescription,
+      link: postLink,
+      timemark: postTimemark,
+      channelId: id,
+      viewed: false,
+    };
+    data.posts.push(post);
+  });
+};
+
 const parseRss = (id, url, response) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(response.data.contents, 'application/xml');
@@ -16,21 +34,7 @@ const parseRss = (id, url, response) => {
   };
 
   const items = doc.querySelectorAll('item');
-  items.forEach((item) => {
-    const postTitle = item.querySelector('title').textContent;
-    const postLink = item.querySelector('link').textContent;
-    const postDescription = item.querySelector('description').textContent;
-    const postTimemark = item.querySelector('pubDate').textContent;
-    const post = {
-      title: postTitle,
-      description: postDescription,
-      link: postLink,
-      timemark: postTimemark,
-      channelId: id,
-      viewed: false,
-    };
-    data.posts.push(post);
-  });
+  addItems(items, data, id);
 
   return data;
 };

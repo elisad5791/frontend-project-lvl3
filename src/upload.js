@@ -6,8 +6,7 @@ const uploadChannel = (channelId, channelUrl, watchedState) => {
   const url = `https://allorigins.hexlet.app/get?disableCache=true&url=${channelUrl}`;
 
   const promise = new Promise((resolve, reject) => {
-    axios
-      .get(url)
+    axios.get(url)
       .then((response) => {
         try {
           const { channelInfo, posts } = parseRss(channelId, channelUrl, response);
@@ -16,9 +15,7 @@ const uploadChannel = (channelId, channelUrl, watchedState) => {
               watchedState.posts,
               (oldPost) => post.channel === oldPost.channel && post.timemark === oldPost.timemark,
             );
-            if (index === -1) {
-              watchedState.posts.push(post);
-            }
+            if (index === -1) watchedState.posts.push(post);
           });
           resolve(channelInfo);
         } catch (e) {
