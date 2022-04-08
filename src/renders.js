@@ -1,51 +1,45 @@
 import _ from 'lodash';
+import onChange from 'on-change';
 
-const addButtonHandler = (button, post) => {
+const addButtonHandler = (button, post, elements) => {
   button.addEventListener('click', () => {
-    const titleElem = document.getElementById('modal-title');
-    const bodyElem = document.getElementById('modal-body');
-    const linkElem = document.getElementById('modal-link');
-    titleElem.textContent = post.title;
-    bodyElem.textContent = post.description;
-    linkElem.href = post.link;
+    elements.modalTitle.textContent = post.title;
+    elements.modalBody.textContent = post.description;
+    elements.modalLink.href = post.link;
     post.viewed = true;
   });
 };
 
-const renderForm = (input, button, watchedState, i18n) => {
-  const feedback = document.getElementById('feedback');
+const renderForm = (watchedState, elements, i18n) => {
   if (watchedState.status === 'invalid') {
-    input.classList.add('is-invalid');
-    input.focus();
-    feedback.className = 'text-danger';
-    feedback.textContent = i18n.t(watchedState.error);
+    elements.input.classList.add('is-invalid');
+    elements.input.focus();
+    elements.feedback.className = 'text-danger';
+    elements.feedback.textContent = i18n.t(watchedState.error);
   } else if (watchedState.status === 'start') {
-    input.readOnly = true;
-    button.disabled = true;
+    elements.input.readOnly = true;
+    elements.button.disabled = true;
   } else if (watchedState.status === 'success') {
-    input.value = '';
-    input.classList.remove('is-invalid');
-    input.readOnly = false;
-    input.focus();
-    button.disabled = false;
-    feedback.className = 'text-success';
-    feedback.textContent = i18n.t('success');
+    elements.input.value = '';
+    elements.input.classList.remove('is-invalid');
+    elements.input.readOnly = false;
+    elements.input.focus();
+    elements.button.disabled = false;
+    elements.feedback.className = 'text-success';
+    elements.feedback.textContent = i18n.t('success');
   } else if (watchedState.status === 'failure') {
-    input.classList.add('is-invalid');
-    input.readOnly = false;
-    input.focus();
-    button.disabled = false;
-    feedback.className = 'text-danger';
-    feedback.textContent = i18n.t(watchedState.error);
+    elements.input.classList.add('is-invalid');
+    elements.input.readOnly = false;
+    elements.input.focus();
+    elements.button.disabled = false;
+    elements.feedback.className = 'text-danger';
+    elements.feedback.textContent = i18n.t(watchedState.error);
   }
 };
 
-const renderFeeds = (watchedState) => {
-  const content = document.getElementById('content');
-  content.classList.remove('d-none');
-  const feeds = document.getElementById('feeds');
-  feeds.innerHTML = '';
-
+const renderFeeds = (watchedState, elements) => {
+  elements.content.classList.remove('d-none');
+  elements.feeds.innerHTML = '';
   watchedState.channels.forEach((channel) => {
     const titleElem = document.createElement('p');
     titleElem.classList.add('fw-bold', 'mb-0');
@@ -54,14 +48,13 @@ const renderFeeds = (watchedState) => {
     const descElem = document.createElement('p');
     descElem.textContent = channel.description;
 
-    feeds.append(titleElem, descElem);
+    elements.feeds.append(titleElem, descElem);
   });
 };
 
-const renderPosts = (watchedState, i18n) => {
+const renderPosts = (watchedState, elements, i18n) => {
   const sortedPosts = _.reverse(_.sortBy(watchedState.posts, (o) => Date.parse(o.timemark)));
-  const postsContainer = document.getElementById('posts');
-  postsContainer.innerHTML = '';
+  elements.posts.innerHTML = '';
   sortedPosts.forEach((post) => {
     const link = document.createElement('a');
     if (post.viewed) {
@@ -77,13 +70,22 @@ const renderPosts = (watchedState, i18n) => {
     button.setAttribute('data-bs-toggle', 'modal');
     button.setAttribute('data-bs-target', '#modal');
     button.textContent = i18n.t('show');
-    addButtonHandler(button, post);
+    addButtonHandler(button, post, elements);
 
     const div = document.createElement('div');
     div.classList.add('d-flex', 'justify-content-between', 'align-items-start', 'mb-3');
     div.append(link, button);
-    postsContainer.append(div);
+    elements.posts.append(div);
   });
 };
 
-export { renderForm, renderFeeds, renderPosts };
+const createWatchedState = (state, elements, i18n) => {
+  const watchedState = onChange(state, (path) => {
+    if (path === 'status') renderForm(watchedState, elements, i18n);
+    if (path === 'channels') renderFeeds(watchedState, elements);
+    if (path.startsWith('posts')) renderPosts(watchedState, elements, i18n);
+  });
+  return watchedState;
+};
+
+export default createWatchedState;

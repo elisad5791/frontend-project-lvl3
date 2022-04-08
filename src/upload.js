@@ -39,4 +39,14 @@ const uploadChannelFirst = (id, url, watchedState) => uploadChannel(id, url, wat
     watchedState.status = 'failure';
   });
 
-export { uploadChannelFirst, uploadChannel };
+const listenChannels = (watchedState) => {
+  const period = 5000;
+  const promises = watchedState.channels
+    .map((channel) => uploadChannel(channel.id, channel.url, watchedState));
+  Promise.all(promises)
+    .then(() => {
+      setTimeout(listenChannels.bind(null, watchedState), period);
+    });
+};
+
+export { uploadChannelFirst, listenChannels };

@@ -1,24 +1,21 @@
 import * as yup from 'yup';
-import onChange from 'on-change';
 import i18next from 'i18next';
 import translation from './locales/ru/ru.js';
-import { uploadChannel, uploadChannelFirst } from './upload.js';
-import { renderForm, renderFeeds, renderPosts } from './renders.js';
-
-const listenChannels = (watchedState) => {
-  const period = 5000;
-  const promises = watchedState.channels
-    .map((channel) => uploadChannel(channel.id, channel.url, watchedState));
-  Promise.all(promises)
-    .then(() => {
-      setTimeout(listenChannels.bind(null, watchedState), period);
-    });
-};
+import { uploadChannelFirst, listenChannels } from './upload.js';
+import createWatchedState from './renders.js';
 
 const app = (i18n) => {
-  const form = document.getElementById('form-rss');
-  const input = document.getElementById('url');
-  const button = document.getElementById('add');
+  const elements = {};
+  elements.form = document.getElementById('form-rss');
+  elements.input = document.getElementById('url');
+  elements.button = document.getElementById('add');
+  elements.feedback = document.getElementById('feedback');
+  elements.modalTitle = document.getElementById('modal-title');
+  elements.modalBody = document.getElementById('modal-body');
+  elements.modalLink = document.getElementById('modal-link');
+  elements.posts = document.getElementById('posts');
+  elements.content = document.getElementById('content');
+  elements.feeds = document.getElementById('feeds');
 
   const state = {
     status: 'initial',
@@ -26,11 +23,7 @@ const app = (i18n) => {
     posts: [],
     error: '',
   };
-  const watchedState = onChange(state, (path) => {
-    if (path === 'status') renderForm(input, button, watchedState, i18n);
-    if (path === 'channels') renderFeeds(watchedState);
-    if (path.startsWith('posts')) renderPosts(watchedState, i18n);
-  });
+  const watchedState = createWatchedState(state, elements, i18n);
 
   yup.setLocale({
     mixed: {
@@ -42,10 +35,10 @@ const app = (i18n) => {
     },
   });
 
-  form.addEventListener('submit', (e) => {
+  elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
     watchedState.status = 'initial';
-    const val = input.value;
+    const val = elements.input.value;
     const urls = watchedState.channels.map((channel) => channel.url);
     const schema = yup.string().required().url().notOneOf(urls);
     schema
