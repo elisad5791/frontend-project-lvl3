@@ -1,42 +1,40 @@
-const addItems = (items, data, id) => {
-  items.forEach((item) => {
-    const postTitle = item.querySelector('title').textContent;
-    const postLink = item.querySelector('link').textContent;
-    const postDescription = item.querySelector('description').textContent;
-    const postTimemark = item.querySelector('pubDate').textContent;
-    const post = {
-      title: postTitle,
-      description: postDescription,
-      link: postLink,
-      timemark: postTimemark,
-      channelId: id,
-      viewed: false,
-    };
-    data.posts.push(post);
-  });
-};
-
-const parseRss = (id, url, response) => {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(response.data.contents, 'application/xml');
-
+const getChannelInfo = (doc) => {
   const title = doc.querySelector('title').textContent;
   const description = doc.querySelector('description').textContent;
+  return { title, description };
+};
 
-  const data = {
-    channelInfo: {
-      title,
-      description,
-      url,
-      id,
-    },
-    posts: [],
-  };
-
+const getPosts = (doc) => {
   const items = doc.querySelectorAll('item');
-  addItems(items, data, id);
+  const posts = [];
+  items.forEach((item) => {
+    const title = item.querySelector('title').textContent;
+    const link = item.querySelector('link').textContent;
+    const description = item.querySelector('description').textContent;
+    const timemark = item.querySelector('pubDate').textContent;
+    const post = {
+      title,
+      link,
+      description,
+      timemark,
+    };
+    posts.push(post);
+  });
+  return posts;
+};
 
-  return data;
+const parseRss = (response) => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(response.data.contents, 'application/xml');
+  const err = doc.querySelector('parseerror');
+  if (err) {
+    throw new Error('parsing');
+  }
+
+  const channelInfo = getChannelInfo(doc);
+  const posts = getPosts(doc);
+
+  return { channelInfo, posts };
 };
 
 export default parseRss;

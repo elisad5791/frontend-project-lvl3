@@ -45,7 +45,7 @@ const app = (i18n) => {
       .validate(val)
       .then((value) => {
         watchedState.status = 'start';
-        uploadChannelFirst(watchedState.channels.length, value, watchedState);
+        uploadChannelFirst(value, watchedState);
       })
       .catch((err) => {
         const { errors } = err;
