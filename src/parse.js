@@ -25,8 +25,8 @@ const getPosts = (doc) => {
 
 const parseRss = (response) => {
   const parser = new DOMParser();
-  const doc = parser.parseFromString(response.data.contents, 'application/xml');
-  const err = doc.querySelector('parseerror');
+  const doc = parser.parseFromString(response.data.contents, 'text/xml');
+  const err = doc.querySelector('parsererror');
   if (err) {
     throw new Error('parsing');
   }
