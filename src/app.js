@@ -44,7 +44,6 @@ const app = (i18n) => {
     schema
       .validate(val)
       .then((value) => {
-        watchedState.status = 'start';
         uploadChannelFirst(value, watchedState);
       })
       .catch((err) => {
