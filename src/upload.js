@@ -16,24 +16,11 @@ const addNewPosts = (posts, watchedState, channelId) => {
   });
 };
 
-const uploadChannel = (url) => {
-  const promise = new Promise((resolve, reject) => {
-    axios.get(url)
-      .then((response) => {
-        resolve(response);
-      })
-      .catch(() => {
-        reject(new Error('network'));
-      });
-  });
-  return promise;
-};
-
 const uploadChannelFirst = (url, watchedState) => {
   watchedState.status = 'start';
   const proxy = 'https://allorigins.hexlet.app/get?disableCache=true';
   const proxiedUrl = `${proxy}&url=${url}`;
-  uploadChannel(proxiedUrl)
+  axios.get(proxiedUrl)
     .then((response) => {
       const { channelInfo, posts } = parseRss(response);
       channelInfo.url = url;
@@ -43,7 +30,7 @@ const uploadChannelFirst = (url, watchedState) => {
       watchedState.status = 'success';
     })
     .catch((err) => {
-      watchedState.error = err.message;
+      watchedState.error = err.message === 'Network Error' ? 'network' : 'parsing';
       watchedState.status = 'failure';
     });
 };
@@ -54,7 +41,7 @@ const listenChannels = (watchedState) => {
   const promises = watchedState.channels
     .map((channel) => {
       const proxiedUrl = `${proxy}&url=${channel.url}`;
-      return uploadChannel(proxiedUrl);
+      return axios.get(proxiedUrl);
     });
   Promise.all(promises)
     .then((responses) => {
@@ -65,7 +52,7 @@ const listenChannels = (watchedState) => {
       });
     })
     .finally(() => {
-      setTimeout(listenChannels.bind(null, watchedState), period);
+      setTimeout(() => listenChannels(watchedState), period);
     });
 };
 

@@ -28,7 +28,7 @@ const parseRss = (response) => {
   const doc = parser.parseFromString(response.data.contents, 'text/xml');
   const err = doc.querySelector('parsererror');
   if (err) {
-    throw new Error('parsing');
+    throw new Error();
   }
 
   const channelInfo = getChannelInfo(doc);
