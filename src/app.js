@@ -22,6 +22,10 @@ const app = (i18n) => {
     channels: [],
     posts: [],
     error: '',
+    uiState: {
+      viewedPosts: new Set(),
+      postId: null,
+    },
   };
   const watchedState = createWatchedState(state, elements, i18n);
 

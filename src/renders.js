@@ -1,13 +1,11 @@
 import _ from 'lodash';
 import onChange from 'on-change';
 
-const addButtonHandler = (button, post, elements) => {
-  button.addEventListener('click', () => {
-    elements.modalTitle.textContent = post.title;
-    elements.modalBody.textContent = post.description;
-    elements.modalLink.href = post.link;
-    post.viewed = true;
-  });
+const renderModal = (watchedState, elements) => {
+  const post = watchedState.posts.find((item) => item.id === watchedState.uiState.postId);
+  elements.modalTitle.textContent = post.title;
+  elements.modalBody.textContent = post.description;
+  elements.modalLink.href = post.link;
 };
 
 const renderForm = (watchedState, elements, i18n) => {
@@ -57,7 +55,7 @@ const renderPosts = (watchedState, elements, i18n) => {
   elements.posts.innerHTML = '';
   sortedPosts.forEach((post) => {
     const link = document.createElement('a');
-    if (post.viewed) {
+    if (watchedState.uiState.viewedPosts.has(post.id)) {
       link.classList.add('fw-normal');
     } else {
       link.classList.add('fw-bold');
@@ -70,7 +68,10 @@ const renderPosts = (watchedState, elements, i18n) => {
     button.setAttribute('data-bs-toggle', 'modal');
     button.setAttribute('data-bs-target', '#modal');
     button.textContent = i18n.t('show');
-    addButtonHandler(button, post, elements);
+    button.addEventListener('click', () => {
+      watchedState.uiState.viewedPosts.add(post.id);
+      watchedState.uiState.postId = post.id;
+    });
 
     const div = document.createElement('div');
     div.classList.add('d-flex', 'justify-content-between', 'align-items-start', 'mb-3');
@@ -83,7 +84,8 @@ const createWatchedState = (state, elements, i18n) => {
   const watchedState = onChange(state, (path) => {
     if (path === 'status') renderForm(watchedState, elements, i18n);
     if (path === 'channels') renderFeeds(watchedState, elements);
-    if (path.startsWith('posts')) renderPosts(watchedState, elements, i18n);
+    if (path === 'uiState.postId') renderModal(watchedState, elements);
+    if (path === 'posts' || path === 'uiState.postId') renderPosts(watchedState, elements, i18n);
   });
   return watchedState;
 };

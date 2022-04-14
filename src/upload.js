@@ -6,11 +6,11 @@ const addNewPosts = (posts, watchedState, channelId) => {
   posts.forEach((post) => {
     const index = _.findIndex(
       watchedState.posts,
-      (oldPost) => channelId === oldPost.channel && post.timemark === oldPost.timemark,
+      (oldPost) => channelId === oldPost.channelId && post.timemark === oldPost.timemark,
     );
     if (index === -1) {
-      post.channel = channelId;
-      post.viewed = false;
+      post.channelId = channelId;
+      post.id = watchedState.posts.length;
       watchedState.posts.push(post);
     }
   });
@@ -43,12 +43,14 @@ const listenChannels = (watchedState) => {
       const proxiedUrl = `${proxy}&url=${channel.url}`;
       return axios.get(proxiedUrl);
     });
-  Promise.all(promises)
+  Promise.allSettled(promises)
     .then((responses) => {
       responses.forEach((response, index) => {
-        const { posts } = parseRss(response);
-        const channelId = watchedState.channels[index].id;
-        addNewPosts(posts, watchedState, channelId);
+        if (response.status === 'fulfilled') {
+          const { posts } = parseRss(response.value);
+          const channelId = watchedState.channels[index].id;
+          addNewPosts(posts, watchedState, channelId);
+        }
       });
     })
     .finally(() => {
