@@ -2,12 +2,16 @@ import axios from 'axios';
 import _ from 'lodash';
 import parseRss from './parse.js';
 
+const getProxiedUrl = (url) => {
+  const proxiedUrl = new URL('/get', 'https://allorigins.hexlet.app');
+  proxiedUrl.searchParams.set('disableCache', 'true');
+  proxiedUrl.searchParams.set('url', url);
+  return proxiedUrl;
+};
+
 const addNewPosts = (posts, watchedState, channelId) => {
   posts.forEach((post) => {
-    const index = _.findIndex(
-      watchedState.posts,
-      (oldPost) => channelId === oldPost.channelId && post.timemark === oldPost.timemark,
-    );
+    const index = _.findIndex(watchedState.posts, (oldPost) => post.link === oldPost.link);
     if (index === -1) {
       post.channelId = channelId;
       post.id = watchedState.posts.length;
@@ -18,8 +22,7 @@ const addNewPosts = (posts, watchedState, channelId) => {
 
 const uploadChannelFirst = (url, watchedState) => {
   watchedState.status = 'start';
-  const proxy = 'https://allorigins.hexlet.app/get?disableCache=true';
-  const proxiedUrl = `${proxy}&url=${url}`;
+  const proxiedUrl = getProxiedUrl(url);
   axios.get(proxiedUrl)
     .then((response) => {
       const { channelInfo, posts } = parseRss(response);
@@ -30,17 +33,22 @@ const uploadChannelFirst = (url, watchedState) => {
       watchedState.status = 'success';
     })
     .catch((err) => {
-      watchedState.error = err.message === 'Network Error' ? 'network' : 'parsing';
+      if (err.isAxiosError) {
+        watchedState.error = 'network';
+      } else if (err.isParsingError) {
+        watchedState.error = 'parsing';
+      } else {
+        watchedState.error = 'unknown';
+      }
       watchedState.status = 'failure';
     });
 };
 
 const listenChannels = (watchedState) => {
   const period = 5000;
-  const proxy = 'https://allorigins.hexlet.app/get?disableCache=true';
   const promises = watchedState.channels
     .map((channel) => {
-      const proxiedUrl = `${proxy}&url=${channel.url}`;
+      const proxiedUrl = getProxiedUrl(channel.url);
       return axios.get(proxiedUrl);
     });
   Promise.allSettled(promises)

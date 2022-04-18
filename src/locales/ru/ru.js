@@ -6,6 +6,7 @@ const translation = {
   show: 'Просмотр',
   network: 'Ошибка сети',
   parsing: 'Ресурс не содержит валидный RSS',
+  unknown: 'Неизвестная ошибка',
 };
 
 export default translation;

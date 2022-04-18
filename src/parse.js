@@ -11,7 +11,8 @@ const getPosts = (doc) => {
     const title = item.querySelector('title').textContent;
     const link = item.querySelector('link').textContent;
     const description = item.querySelector('description').textContent;
-    const timemark = item.querySelector('pubDate').textContent;
+    const pubDate = item.querySelector('pubDate');
+    const timemark = pubDate ? pubDate.textContent : '';
     const post = {
       title,
       link,
@@ -28,7 +29,9 @@ const parseRss = (response) => {
   const doc = parser.parseFromString(response.data.contents, 'text/xml');
   const err = doc.querySelector('parsererror');
   if (err) {
-    throw new Error();
+    const error = new Error();
+    error.isParsingError = true;
+    throw error;
   }
 
   const channelInfo = getChannelInfo(doc);
